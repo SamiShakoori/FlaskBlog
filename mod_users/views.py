@@ -1,4 +1,4 @@
-from flask import render_template, request, flash
+from flask import render_template, request, flash, redirect, url_for
 from mod_users.forms import RegisterForm, LoginForm
 from sqlalchemy.exc import IntegrityError
 from . import users
@@ -46,3 +46,9 @@ def login():
             return render_template('users/login.html', form=form)
         return render_template('users/index.html')
     return render_template('users/login.html', form=form)
+
+
+@users.route('/logout/')
+def logout():
+    flash('You logged out successfully')
+    return redirect(url_for('users.login'))

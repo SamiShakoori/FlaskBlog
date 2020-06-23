@@ -3,5 +3,9 @@
 {% block title %}Users Index{% endblock %}
 
 {% block content %}
+<header>
+    <a href="{{ url_for('users.logout') }}" class="button">Logout</a>
+</header>
 <h1>Welcome dear</h1>
+
 {% endblock %}

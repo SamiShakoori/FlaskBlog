@@ -32,3 +32,10 @@ def login():
         return render_template('admin/index.html')
         # return redirect(url_for('admin.index'))
     return render_template('admin/login.html', form=form)
+
+
+@admin.route('/logout/')
+def logout():
+    session.clear()
+    flash('You logged out successfully', category='error')
+    return redirect(url_for('admin.login'))
