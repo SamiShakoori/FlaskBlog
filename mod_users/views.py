@@ -1,5 +1,5 @@
 from flask import render_template, request, flash
-from mod_users.forms import RegisterForm
+from mod_users.forms import RegisterForm, LoginForm
 from sqlalchemy.exc import IntegrityError
 from . import users
 from mod_users import User
@@ -29,3 +29,20 @@ def register():
             flash('This Email already used')
             render_template('users/register.html', form=form)
     return render_template('users/register.html', form=form)
+
+
+@users.route('/login/', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    if request.method == 'POST':
+        if not form.validate_on_submit():
+            return render_template('users/login.html', form=form)
+        user = User.query.filter(User.email == form.email.data).first()
+        if not user:
+            flash('User does\'nt exist!')
+            return render_template('users/login.html', form=form)
+        if not user.check_password(form.password.data):
+            flash('Your password is wrong!')
+            return render_template('users/login.html', form=form)
+        return render_template('users/index.html')
+    return render_template('users/login.html', form=form)
