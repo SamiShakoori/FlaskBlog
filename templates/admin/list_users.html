@@ -1,0 +1,32 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}List Users - Admin Dashboard{% endblock %}
+
+{% block page_content %}
+<h1>List Users</h1>
+<table>
+    <caption>Users</caption>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td data-label="ID">{{ user.id }}</td>
+        <td data-label="Name">{{ user.name or '-' }}</td>
+        <td data-label="Email">{{ user.email }}</td>
+        <td data-label="Role">{{ 'Admin' if user.role else 'User' }}</td>
+        <td data-label="Actions">
+            <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" class="button">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
