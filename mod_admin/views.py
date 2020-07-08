@@ -105,3 +105,9 @@ def create_post():
             flash('Try Again!')
             return render_template('admin/create_post.html', form=form)
     return render_template('admin/create_post.html', form=form)
+
+
+@admin.route('/posts/')
+def list_post():
+    posts = Post.query.order_by(Post.id.desc()).all()
+    return render_template('admin/list_post.html', posts=posts)

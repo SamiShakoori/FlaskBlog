@@ -1,0 +1,24 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}List Posts{% endblock %}
+
+{% block page_content %}
+<h1>List Posts</h1>
+<table>
+    <caption>List Posts</caption>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for post in posts %}
+    <tr>
+        <td data-label="ID">{{ post.id }}</td>
+        <td data-label="Title">{{ post.title }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
