@@ -4,6 +4,8 @@ from . import admin
 from app import db
 from mod_users.forms import LoginForm, RegisterForm
 from mod_users.models import User
+from mod_blog.forms import CreatePostForm
+from mod_blog.models import Post
 
 
 @admin.route('/')
@@ -80,3 +82,26 @@ def create_user():
             flash('This email had already used!')
             return render_template('admin/create_user.html', form=form)
     return render_template('admin/create_user.html', form=form)
+
+
+@admin.route('/posts/new/', methods=['GET', 'POST'])
+def create_post():
+    form = CreatePostForm(request.form)
+    if request.method == 'POST':
+        if not form.validate_on_submit():
+            return render_template('admin/create_post.html', form=form)
+        new_post = Post()
+        new_post.title = form.title.data
+        new_post.slug = form.slug.data
+        new_post.content = form.content.data
+        new_post.summary = form.summary.data
+        try:
+            db.session.add(new_post)
+            db.session.commit()
+            flash('Post created.')
+            return render_template('admin/create_post.html', form=form)
+        except IntegrityError:
+            db.session.rollback()
+            flash('Try Again!')
+            return render_template('admin/create_post.html', form=form)
+    return render_template('admin/create_post.html', form=form)
