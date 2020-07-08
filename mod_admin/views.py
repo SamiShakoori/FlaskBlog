@@ -1,11 +1,15 @@
 from flask import render_template, request, flash, session, redirect, url_for
 from sqlalchemy.exc import IntegrityError
+from werkzeug.utils import secure_filename
+import uuid
 from . import admin
 from app import db
 from mod_users.forms import LoginForm, RegisterForm
 from mod_users.models import User
 from mod_blog.forms import CreatePostForm
 from mod_blog.models import Post
+from mod_uploads.models import File
+from mod_uploads.forms import FileUploadForm
 
 
 @admin.route('/')
@@ -120,3 +124,23 @@ def delete_post(post_id):
     db.session.commit()
     flash('Post deleted.')
     return redirect(url_for('admin.list_post'))
+
+
+@admin.route('/library/upload/', methods=['POST', 'GET'])
+def upload_file():
+    form = FileUploadForm()
+    if request.method == 'POST':
+        if not form.validate_on_submit():
+            return '1'
+        filename = f'{uuid.uuid1()}-{secure_filename(form.file.data.filename)}'
+        new_file = File()
+        new_file.filename = filename
+        try:
+            db.session.add(new_file)
+            db.session.commit()
+            form.file.data.save(f'static/uploads/{filename}')
+            flash(f'File uploaded on {url_for("static", filename="uploads/"+filename, _external=True)}')
+        except IntegrityError:
+            db.session.rollback()
+            flash('Upload Failed', category='error')
+    return render_template('admin/upload_file.html', form=form)
